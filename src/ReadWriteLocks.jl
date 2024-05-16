@@ -23,7 +23,7 @@ mutable struct ReadWriteLock{L<:LockTypes} <: AbstractLock
     readers::Int
     writer::Bool
     lock::L  # reentrant mutex
-    condition::Condition
+    condition::Threads.Condition
     read_lock::ReadLock
     write_lock::WriteLock
 
@@ -31,7 +31,7 @@ mutable struct ReadWriteLock{L<:LockTypes} <: AbstractLock
         readers::Int=0,
         writer::Bool=false,
         lock::L=ReentrantLock(),
-        condition::Condition=Condition(),
+        condition::Threads.Condition=Threads.Condition(lock),
     ) where L <: LockTypes
         rwlock = new{L}(readers, writer, lock, condition)
         rwlock.read_lock = ReadLock(rwlock)
